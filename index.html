@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colegio Montano - Reading 1st Grade Interactive Board</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Theme Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        montanoBlue: '#1269A8',
+                        montanoYellow: '#F7D615',
+                        montanoGreenGrey: '#54887D',
+                        montanoLightBlue: '#88B5C7',
+                        montanoOlive: '#A6B046',
+                        montanoBg: '#F2F5E9',
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F2F5E9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2D3748;
+        }
+        .tab-btn.active {
+            background-color: #1269A8;
+            color: #FFFFFF;
+            border-bottom: 4px solid #F7D615;
+            font-weight: bold;
+        }
+        .tab-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .week-btn.active {
+            background-color: #F7D615;
+            color: #1269A8;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="bg-montanoBlue text-white p-4 shadow-md flex flex-wrap justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" alt="Colegio Montano Logo" class="h-12 bg-white p-1 rounded-md shadow" onerror="this.src='https://placehold.co/120x50/1269A8/ffffff?text=Montano'">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-wide">COLEGIO MONTANO</h1>
+                <p class="text-xs md:text-sm text-montanoLightBlue font-medium">Interactive Digital Board | Reading 1st Grade - Our World 1 (NatGeo)</p>
+            </div>
+        </div>
+        
+        <!-- Header Info & Actions -->
+        <div class="flex items-center space-x-3 mt-2 sm:mt-0">
+            <div class="hidden md:block text-right text-xs border-r border-montanoLightBlue pr-3">
+                <p><span class="font-bold text-montanoYellow">Teacher:</span> Nicole De León</p>
+                <p><span class="font-bold text-montanoYellow">Term:</span> Jan 11 - Mar 5 (8 Weeks / Unit 1)</p>
+            </div>
+            <!-- Fullscreen Button -->
+            <button onclick="toggleFullscreen()" class="bg-montanoYellow hover:bg-yellow-400 text-montanoBlue font-bold py-2 px-3 rounded-lg shadow transition flex items-center gap-2 text-sm">
+                <i class="fas fa-expand"></i>
+                <span class="hidden sm:inline">Fullscreen</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-7xl">
+        
+        <!-- TOP INFO BOARD (METADATA & CNB / LEADER IN ME ALIGNMENT) -->
+        <div class="bg-white rounded-xl p-5 mb-6 card-shadow border-l-8 border-montanoBlue">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div class="bg-montanoBg p-3 rounded-lg">
+                    <span class="text-montanoBlue font-bold block text-xs uppercase">Course & Grade</span>
+                    <p class="font-semibold text-gray-800">Reading - 1st Grade Primary</p>
+                    <span class="text-[11px] text-montanoGreenGrey font-bold">NatGeo Our World 1</span>
+                </div>
+                <div class="bg-montanoBg p-3 rounded-lg">
+                    <span class="text-montanoBlue font-bold block text-xs uppercase">Curriculum Unit</span>
+                    <p class="font-semibold text-gray-800">Unit 1 Plan (Book Units 1, 2 & 3)</p>
+                </div>
+                <div class="bg-montanoBg p-3 rounded-lg">
+                    <span class="text-montanoBlue font-bold block text-xs uppercase">CNB Competency (Guatemala)</span>
+                    <p class="text-xs text-gray-700">Responde verbalmente y con gráficos a lecturas sencillas identificando ideas clave y vocabulario en inglés.</p>
+                </div>
+                <div class="bg-montanoBg p-3 rounded-lg">
+                    <span class="text-montanoBlue font-bold block text-xs uppercase">Leader in Me Habits</span>
+                    <p class="text-xs text-montanoGreenGrey font-semibold">Be Proactive, Begin with the End in Mind, Put First Things First, Synergize.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEK SELECTION BAR -->
+        <div class="mb-6">
+            <h2 class="text-sm font-bold text-montanoBlue uppercase mb-2 flex items-center gap-2">
+                <i class="fas fa-calendar-week"></i> Select Week Lesson:
+            </h2>
+            <div class="flex flex-wrap gap-2" id="week-buttons-container">
+                <!-- Buttons rendered dynamically via JS -->
+            </div>
+        </div>
+
+        <!-- LESSON CONTAINER -->
+        <div class="bg-white rounded-2xl card-shadow overflow-hidden border border-gray-200">
+            
+            <!-- LESSON HEADER -->
+            <div class="bg-montanoGreenGrey text-white p-4 flex flex-wrap justify-between items-center">
+                <div>
+                    <span id="lesson-week-tag" class="bg-montanoYellow text-montanoBlue font-bold px-2.5 py-1 rounded text-xs uppercase tracking-wider">Week 1</span>
+                    <h2 id="lesson-title" class="text-xl font-bold mt-1">Drawing and Writing</h2>
+                    <p id="lesson-pages" class="text-xs text-montanoBg font-medium mt-0.5">Student Book Pages: 20, 21, 22</p>
+                </div>
+                <div class="mt-2 sm:mt-0 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm text-xs">
+                    <i class="fas fa-bullseye text-montanoYellow mr-1"></i>
+                    <span class="font-semibold">Learning Outcome:</span> <span id="lesson-outcome">Identify ancient & modern writing tools.</span>
+                </div>
+            </div>
+
+            <!-- MOMENT TABS (4 PEDAGOGICAL MOMENTS) -->
+            <div class="flex border-b border-gray-200 bg-gray-50 overflow-x-auto">
+                <button onclick="switchTab('moment1')" id="tab-moment1" class="tab-btn active flex-1 min-w-[140px] py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-montanoBlue flex items-center justify-center gap-2">
+                    <i class="fas fa-bolt text-montanoYellow"></i>
+                    <span>I) Warm-Up (~5m)</span>
+                </button>
+                <button onclick="switchTab('moment2')" id="tab-moment2" class="tab-btn flex-1 min-w-[140px] py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-montanoBlue flex items-center justify-center gap-2">
+                    <i class="fas fa-user text-montanoLightBlue"></i>
+                    <span>II) Individual Work (20m)</span>
+                </button>
+                <button onclick="switchTab('moment3')" id="tab-moment3" class="tab-btn flex-1 min-w-[140px] py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-montanoBlue flex items-center justify-center gap-2">
+                    <i class="fas fa-users text-montanoOlive"></i>
+                    <span>III) Cooperative Work (30m)</span>
+                </button>
+                <button onclick="switchTab('moment4')" id="tab-moment4" class="tab-btn flex-1 min-w-[140px] py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-montanoBlue flex items-center justify-center gap-2">
+                    <i class="fas fa-comments text-montanoBlue"></i>
+                    <span>IV) Plenary & Take-Home (15m)</span>
+                </button>
+            </div>
+
+            <!-- TAB CONTENT PANELS -->
+            <div class="p-6">
+                
+                <!-- MOMENT 1: WARM UP -->
+                <div id="content-moment1" class="tab-content">
+                    <div class="bg-yellow-50 border-l-4 border-montanoYellow p-4 rounded-r-lg mb-6">
+                        <h3 class="font-bold text-montanoBlue text-base flex items-center gap-2">
+                            <i class="fas fa-brain text-montanoYellow"></i> Motivational Introduction & Vocabulary 1 & 2 Review (5 minutes)
+                        </h3>
+                        <p class="text-xs text-gray-600 mt-1">Goal: Activate prior knowledge, review unit vocabulary terms, and energize the classroom using Leader in Me proactive mindsets!</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Brain Break / Hook -->
+                        <div class="bg-montanoBg p-4 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-montanoBlue text-sm mb-2 flex items-center gap-2">
+                                <i class="fas fa-gamepad"></i> Brain Break / Warm-Up Hook Activity
+                            </h4>
+                            <p id="m1-hook" class="text-sm text-gray-700 leading-relaxed"></p>
+                        </div>
+
+                        <!-- Vocabulary Review Cards -->
+                        <div class="bg-montanoBg p-4 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-montanoBlue text-sm mb-2 flex items-center gap-2">
+                                <i class="fas fa-spell-check"></i> Vocab 1 & Vocab 2 Flashcard Rapid Review
+                            </h4>
+                            <p class="text-xs text-gray-500 mb-2">Review keywords from Our World 1 SB/WB units:</p>
+                            <div id="m1-vocab-container" class="flex flex-wrap gap-2">
+                                <!-- Vocab chips injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOMENT 2: INDIVIDUAL WORK -->
+                <div id="content-moment2" class="tab-content hidden">
+                    <div class="bg-blue-50 border-l-4 border-montanoLightBlue p-4 rounded-r-lg mb-6">
+                        <h3 class="font-bold text-montanoBlue text-base flex items-center gap-2">
+                            <i class="fas fa-pencil-alt text-montanoLightBlue"></i> Individual Work & Book Production (20 minutes)
+                        </h3>
+                        <p class="text-xs text-gray-600 mt-1">Montano Leader Habit: <strong>"Put First Things First"</strong> (Work independently with focus before playing).</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Instructions & Book Work -->
+                        <div class="lg:col-span-2 space-y-4">
+                            <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                <h4 class="font-bold text-montanoBlue text-sm mb-2"><i class="fas fa-book-open mr-1"></i> NatGeo Book Instructions & Production Tasks</h4>
+                                <ul id="m2-tasks" class="list-disc list-inside text-sm text-gray-700 space-y-2">
+                                    <!-- Dynamic tasks -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Answer / Guidance Collapsible (Accordion) -->
+                        <div class="bg-montanoBg p-4 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-montanoBlue text-sm mb-2"><i class="fas fa-key text-montanoYellow mr-1"></i> Interactive Teacher Solutions & Guidance</h4>
+                            <p class="text-xs text-gray-600 mb-3">Hidden during student work time. Click button to reveal answers on board:</p>
+                            
+                            <button onclick="toggleAccordion('answer-key-box')" class="w-full bg-montanoBlue text-white py-2 px-4 rounded-lg font-semibold text-sm flex justify-between items-center hover:bg-blue-700 transition">
+                                <span><i class="fas fa-eye mr-2"></i> Reveal / Hide Answer Key</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+
+                            <div id="answer-key-box" class="hidden mt-3 p-3 bg-white border border-gray-300 rounded-lg text-xs text-gray-700 space-y-2">
+                                <p class="font-bold text-montanoGreenGrey">Expected Solutions (Our World 1):</p>
+                                <div id="m2-solutions">
+                                    <!-- Dynamic solutions -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOMENT 3: COOPERATIVE WORK -->
+                <div id="content-moment3" class="tab-content hidden">
+                    <div class="bg-green-50 border-l-4 border-montanoOlive p-4 rounded-r-lg mb-6">
+                        <h3 class="font-bold text-montanoBlue text-base flex items-center gap-2">
+                            <i class="fas fa-users text-montanoOlive"></i> Cooperative Work & Peer Synergy (30 minutes)
+                        </h3>
+                        <p class="text-xs text-gray-600 mt-1">Montano Leader Habit: <strong>"Synergize"</strong> (Together is Better) & <strong>"Think Win-Win"</strong>.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Group Activity -->
+                        <div class="md:col-span-2 bg-montanoBg p-5 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-montanoBlue text-sm mb-3"><i class="fas fa-tasks mr-2"></i> Team / Pair Challenge Task</h4>
+                            <div id="m3-activity" class="text-sm text-gray-700 leading-relaxed space-y-2">
+                                <!-- Dynamic Activity -->
+                            </div>
+                        </div>
+
+                        <!-- Leader in Me Roles -->
+                        <div class="bg-white p-5 rounded-xl border border-montanoOlive/30 card-shadow">
+                            <h4 class="font-bold text-montanoOlive text-sm mb-3 flex items-center gap-2">
+                                <i class="fas fa-id-badge"></i> Cooperative Team Roles
+                            </h4>
+                            <ul class="text-xs space-y-2.5 text-gray-700">
+                                <li class="p-2 bg-montanoBg rounded flex items-center gap-2">
+                                    <span class="font-bold text-montanoBlue">1. Timekeeper / Captain:</span> Keeps team focused and on schedule.
+                                </li>
+                                <li class="p-2 bg-montanoBg rounded flex items-center gap-2">
+                                    <span class="font-bold text-montanoBlue">2. Reader / Speaker:</span> Reads book prompt and presents findings.
+                                </li>
+                                <li class="p-2 bg-montanoBg rounded flex items-center gap-2">
+                                    <span class="font-bold text-montanoBlue">3. Artist / Material Leader:</span> Manages crayons, pencils & drawing.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOMENT 4: PLENARY & TAKE-HOME -->
+                <div id="content-moment4" class="tab-content hidden">
+                    <div class="bg-indigo-50 border-l-4 border-montanoBlue p-4 rounded-r-lg mb-6">
+                        <h3 class="font-bold text-montanoBlue text-base flex items-center gap-2">
+                            <i class="fas fa-chalkboard-teacher text-montanoBlue"></i> Plenary Presentation, Interactive Game & Home Inquiry (15 minutes)
+                        </h3>
+                        <p class="text-xs text-gray-600 mt-1">Montano Leader Habit: <strong>"Seek First to Understand, Then to be Understood"</strong>.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Plenary Presentation -->
+                        <div class="bg-montanoBg p-4 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-montanoBlue text-sm mb-2"><i class="fas fa-bullhorn mr-2"></i> Team Plenary Mini-Expos</h4>
+                            <div id="m4-plenary" class="text-sm text-gray-700 space-y-2">
+                                <!-- Dynamic Plenary -->
+                            </div>
+                        </div>
+
+                        <!-- Take-Home Research Question -->
+                        <div class="bg-amber-50 p-4 rounded-xl border border-montanoYellow">
+                            <h4 class="font-bold text-montanoBlue text-sm mb-2 flex items-center gap-2">
+                                <i class="fas fa-home text-montanoYellow"></i> Take-Home Inquiry Activity (Investigate at Home!)
+                            </h4>
+                            <p id="m4-takehome" class="text-sm font-medium text-gray-800 bg-white p-3 rounded-lg border border-yellow-200 italic">
+                                <!-- Dynamic Take-Home Question -->
+                            </p>
+                            <span class="text-[11px] text-gray-500 mt-2 block">💡 Discuss this question with your family and bring your idea or drawing to next week's class!</span>
+                        </div>
+                    </div>
+
+                    <!-- INTERACTIVE RUBRIC / CHECKLIST FOR PLENARY -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-5 card-shadow">
+                        <h4 class="font-bold text-montanoBlue text-sm mb-3 flex items-center gap-2">
+                            <i class="fas fa-clipboard-check text-montanoGreenGrey"></i> Interactive Plenary Evaluation Checklist (Group Assessment)
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left text-gray-700">
+                                <thead class="text-xs text-montanoBlue uppercase bg-montanoBg">
+                                    <tr>
+                                        <th class="py-2 px-3">Evaluation Criteria</th>
+                                        <th class="py-2 px-3 text-center">Needs Work (1)</th>
+                                        <th class="py-2 px-3 text-center">Good (2)</th>
+                                        <th class="py-2 px-3 text-center">Excellent (3)</th>
+                                        <th class="py-2 px-3 text-center">Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold">1. Reading Vocabulary Mastery</td>
+                                        <td class="text-center"><input type="radio" name="c1" value="1" onclick="calcScore()"></td>
+                                        <td class="text-center"><input type="radio" name="c1" value="2" onclick="calcScore()"></td>
+                                        <td class="text-center"><input type="radio" name="c1" value="3" onclick="calcScore()" checked></td>
+                                        <td id="s1" class="text-center font-bold text-montanoBlue">3</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold">2. Reading Comprehension Clarity</td>
+                                        <td class="text-center"><input type="radio" name="c2" value="1" onclick="calcScore()"></td>
+                                        <td class="text-center"><input type="radio" name="c2" value="2" onclick="calcScore()" checked></td>
+                                        <td class="text-center"><input type="radio" name="c2" value="3" onclick="calcScore()"></td>
+                                        <td id="s2" class="text-center font-bold text-montanoBlue">2</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold">3. Team Synergy & Equal Roles</td>
+                                        <td class="text-center"><input type="radio" name="c3" value="1" onclick="calcScore()"></td>
+                                        <td class="text-center"><input type="radio" name="c3" value="2" onclick="calcScore()"></td>
+                                        <td class="text-center"><input type="radio" name="c3" value="3" onclick="calcScore()" checked></td>
+                                        <td id="s3" class="text-center font-bold text-montanoBlue">3</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-semibold">4. Plenary Response to Questions</td>
+                                        <td class="text-center"><input type="radio" name="c4" value="1" onclick="calcScore()"></td>
+                                        <td class="text-center"><input type="radio" name="c4" value="2" onclick="calcScore()" checked></td>
+                                        <td class="text-center"><input type="radio" name="c4" value="3" onclick="calcScore()"></td>
+                                        <td id="s4" class="text-center font-bold text-montanoBlue">2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 text-right">
+                            <span class="font-bold text-gray-700 text-sm">Total Group Score: </span>
+                            <span id="total-score" class="text-lg font-bold text-montanoBlue bg-montanoYellow px-3 py-1 rounded-lg">10 / 12</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JAVASCRIPT LOGIC FOR INTERACTIVE DIGITAL BOARD -->
+    <script>
+        // DATA STRUCTURE: 8 WEEKS READING CURRICULUM - OUR WORLD 1 (NATGEO)
+        const weeksData = [
+            {
+                week: 1,
+                date: "Jan 11 - Jan 15",
+                title: "Drawing and Writing (NatGeo Unit 1)",
+                pages: "Student Book Pages: 20, 21, 22",
+                outcome: "Compare past and present writing tools (wall, clay tablet vs. paper, crayon, tablet).",
+                vocab: ["Vocab 1: Wall", "Vocab 1: Tablet", "Vocab 1: Stick", "Vocab 2: Paper", "Vocab 2: Crayon", "Vocab 2: Pencil", "In the Past", "Now"],
+                hook: "🎭 <strong>Past vs. Now Freeze Motion:</strong> Teacher calls 'Past' (students mime etching on stone with sticks) or 'Now' (students mime swiping on a tablet or writing on paper)!",
+                m2Tasks: [
+                    "Listen and read 'Drawing and Writing' on Student Book Page 20.",
+                    "Complete Exercise 2 (Page 21): Circle what you use to draw or write on (wall, paper, crayon, stick, hand, pencil).",
+                    "Complete Exercise 3 (Page 21): Check Past or Now table for crayon, hand, paint, tablet, and stick.",
+                    "Complete Exercise 4 (Page 21): Count and write the number words for pencils, crayons, sticks, pens."
+                ],
+                m2Solutions: "<strong>Ex 2:</strong> Paper, Crayon, Pencil.<br><strong>Ex 3 Past:</strong> hand, stick, tablet (clay). <strong>Now:</strong> crayon, paint, tablet (digital).<br><strong>Ex 4:</strong> Number words (zero, one, two, three...).",
+                m3Activity: "<strong>Value Task - Work Hard in School (Pairs):</strong> Follow SB Page 22. Cut out name tag, write <em>'Hello'</em> with crayon and <em>'My name is...'</em> with pencil. Roleplay greetings: <em>'Hello, my name is Mia. What's your name?'</em>.",
+                m4Plenary: "3 pairs wear their name tags and perform their English greeting dialogue in front of the class.",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Ask your parents or grandparents what writing tool they used when they were 6 years old!"
+            },
+            {
+                week: 2,
+                date: "Jan 18 - Jan 22",
+                title: "The English Alphabet (NatGeo Unit 1)",
+                pages: "Workbook Pages: 12, 13, 14",
+                outcome: "Discover historical alphabet evolution (23 letters in the past vs. 26 letters now) and letter sounds.",
+                vocab: ["Vocab 1: Alphabet", "Vocab 1: Letters", "Vocab 1: Sounds", "Vocab 2: Past (23)", "Vocab 2: Now (26)", "Represent"],
+                hook: "🔤 <strong>Chant & Clap:</strong> Sing the ABC song and clap hands whenever you say a vowel (A, E, I, O, U)!",
+                m2Tasks: [
+                    "Read Workbook Page 12: Compare the alphabet in the past (23 letters) and now (26 letters).",
+                    "Exercise 2 (Page 12): Read and circle YES or NO for statements.",
+                    "Exercise 3 (Page 12): Write letter counts for Past vs Now.",
+                    "Exercise 5 (Page 13): Hidden Letter Hunt - Color classroom items containing letter shapes."
+                ],
+                m2Solutions: "<strong>Ex 2:</strong> 1. Now English alphabet has 20 letters? <strong>NO</strong>. 2. Letters represent sounds? <strong>YES</strong>.<br><strong>Ex 3:</strong> 1. In the past: 23 letters. 2. Now: 26 letters.",
+                m3Activity: "<strong>Classroom Letter Detectives (Teams of 3):</strong> Find 4 classroom items starting with target letters. Draw them on a shared mini-poster and write their starting letter.",
+                m4Plenary: "Teams show 1 item found and pronounce its starting letter sound for the class.",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Look at 3 item labels in your kitchen with your parents. Can you name the first letter of each item?"
+            },
+            {
+                week: 3,
+                date: "Jan 25 - Jan 29",
+                title: "Rainbows (NatGeo Unit 2)",
+                pages: "Student Book Pages: 36, 37, 38",
+                outcome: "Identify rainbow color order and items present in the sky.",
+                vocab: ["Vocab 1: Red", "Vocab 1: Orange", "Vocab 1: Yellow", "Vocab 1: Green", "Vocab 2: Blue", "Vocab 2: Indigo", "Vocab 2: Violet", "Sky", "Sun"],
+                hook: "🌈 <strong>Color Jump Game:</strong> Teacher calls a color name. Students wearing that color jump up and shout 'Rainbow!'",
+                m2Tasks: [
+                    "Listen and read 'Rainbows' on Student Book Page 36.",
+                    "Exercise 2 (Page 37): Read and circle YES or NO.",
+                    "Exercise 3 (Page 37): Circle things in the sky (tree, fireworks, butterfly, sun, flower, rainbow).",
+                    "Exercise 4 (Page 37): Color the rainbow arcs in exact color order."
+                ],
+                m2Solutions: "<strong>Ex 2:</strong> 1. Purple & white in rainbow? <strong>NO</strong>. 2. Rainbow is in the sky? <strong>YES</strong>.<br><strong>Ex 3 Sky items:</strong> Fireworks, Sun, Rainbow.",
+                m3Activity: "<strong>Value Task - Enjoy Nature (Pairs):</strong> Read SB Page 38: <em>'The bush is green. The flowers are red...'</em>. Color the nature scene with a partner and write the missing sentences.",
+                m4Plenary: "Pairs present their nature drawing and read 1 sentence out loud to the class.",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Look at the sky at sunset with an adult. How many colors can you spot?"
+            },
+            {
+                week: 4,
+                date: "Feb 1 - Feb 5",
+                title: "The Northern Lights (NatGeo Unit 2)",
+                pages: "Workbook Pages: 24, 25, 26",
+                outcome: "Differentiate daytime sky phenomena (Rainbows) from nighttime sky phenomena (Northern Lights).",
+                vocab: ["Vocab 1: Northern Lights", "Vocab 1: Night", "Vocab 1: Day", "Vocab 2: Moon", "Vocab 2: Colors", "Dark", "Sky"],
+                hook: "🌌 <strong>Flashlight Northern Lights Simulation:</strong> Turn off lights, shine colored flashlights on the board, and recreate glowing lights in motion!",
+                m2Tasks: [
+                    "Read Workbook Page 24 about Northern Lights.",
+                    "Exercise 2 (Page 24): Circle YES or NO.",
+                    "Exercise 3 (Page 24): Complete multiple choice sentences (moon vs. sun).",
+                    "Exercise 4 (Page 25): Check chart comparing Northern Lights vs Rainbows (day/night, colors)."
+                ],
+                m2Solutions: "<strong>Ex 2:</strong> 1. See in day? <strong>NO</strong>. 2. Black and white? <strong>NO</strong>.<br><strong>Ex 3:</strong> 1. Sun in sky (day). 2. Moon in sky (night).<br><strong>Ex 4:</strong> Northern Lights = night. Rainbows = day.",
+                m3Activity: "<strong>Day vs. Night Sky Venn Diagram (Pairs):</strong> Draw two overlapping circles. Place sun/rainbow in 'Day', moon/lights in 'Night', and colors in 'Both'.",
+                m4Plenary: "Teams state 1 difference between daytime and nighttime sky phenomena.",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Go outside at night with a parent. Do you see stars or the moon? Draw what you observe!"
+            },
+            {
+                week: 5,
+                date: "Feb 8 - Feb 12",
+                title: "Families Are Different (NatGeo Unit 3)",
+                pages: "Student Book Pages: 52, 53, 54",
+                outcome: "Name family members and compare small vs. big family structures across cultures.",
+                vocab: ["Vocab 1: Grandfather", "Vocab 1: Grandmother", "Vocab 1: Father", "Vocab 1: Mother", "Vocab 2: Brother", "Vocab 2: Sister", "Big Family", "Small Family"],
+                hook: "👨‍👩‍👧‍👦 <strong>Finger Family Warm-up:</strong> Do finger movements while singing family vocabulary words!",
+                m2Tasks: [
+                    "Read Student Book Page 52: Compare family from Turkey (small) and family from Mexico (big).",
+                    "Exercise 2 (Page 53): Match family to number of people.",
+                    "Exercise 3 (Page 53): Complete the Family Tree chart with vocabulary words.",
+                    "Exercise 4 (Page 53): Fill in student and partner family size details."
+                ],
+                m2Solutions: "<strong>Ex 2:</strong> Turkey = 3 people. Mexico = 9 people.<br><strong>Ex 3 Tree:</strong> Grandparents top, Parents middle, Brother/Sister bottom.",
+                m3Activity: "<strong>Value Task - Love Your Family (Pairs):</strong> Read SB Page 54. Complete: <em>'I'm [Name]. I have a [big/small] family...'</em>. Draw your family and share with your group.",
+                m4Plenary: "Students present their partner's family size: <em>'This is [Partner]. They have 2 brothers.'</em>",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Ask a family member to tell you a short story about when they were 6 years old!"
+            },
+            {
+                week: 6,
+                date: "Feb 15 - Feb 19",
+                title: "Families Around the World (NatGeo Unit 3)",
+                pages: "Workbook Pages: 36, 37, 38",
+                outcome: "Identify diverse family living structures in China, Australia, and Ethiopia.",
+                vocab: ["Vocab 1: World", "Vocab 1: China", "Vocab 1: Australia", "Vocab 2: Ethiopia", "Vocab 2: Different", "Live", "Places"],
+                hook: "🌍 <strong>Global Map Spin:</strong> Point to China, Australia, and Ethiopia on a world map or globe!",
+                m2Tasks: [
+                    "Read Workbook Page 36 'Families Around the World'.",
+                    "Exercise 2 (Page 37): Circle YES or NO.",
+                    "Exercise 3 (Page 37): Check Big or Small in table for China, Australia, Ethiopia, and your family.",
+                    "Exercise 4 (Page 37): Complete sentences describing babies and parents in each photo."
+                ],
+                m2Solutions: "<strong>Ex 2:</strong> 1. Small in China/Australia? <strong>YES</strong>. 2. Big in Ethiopia? <strong>YES</strong>. 3. Families different? <strong>YES</strong>.<br><strong>Ex 3:</strong> China=Small, Australia=Small, Ethiopia=Big.",
+                m3Activity: "<strong>World Family Poster (Teams of 3):</strong> Assigned a country (China, Australia, Ethiopia). Draw a family in that country showcasing their environment.",
+                m4Plenary: "Gallery Walk: Teams move around to view each country's family poster.",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Find out from your parents what city or country your grandparents were born in!"
+            },
+            {
+                week: 7,
+                date: "Feb 22 - Feb 26",
+                title: "Extended Reading: Cave Paintings (NatGeo Unit 1)",
+                pages: "Student Book Pages: 58, 59",
+                outcome: "Understand how early humans communicated through cave art in the past.",
+                vocab: ["Vocab 1: Cave", "Vocab 1: Paint", "Vocab 1: Hands", "Vocab 2: Animals", "Vocab 2: Story", "Stone", "Past"],
+                hook: "🎨 <strong>Under-Desk Cave Drawing:</strong> Tape paper under student desks. Students lie down and draw with crayons like ancient cave painters!",
+                m2Tasks: [
+                    "Read 'Extended Reading: Cave Paintings' on Student Book Page 58.",
+                    "Identify why ancient people painted on stone walls (to record animals and tell stories).",
+                    "Answer comprehension questions on SB Page 59."
+                ],
+                m2Solutions: "Cave paintings used hand outlines and animal shapes. Ancient people painted on stone cave walls in the past.",
+                m3Activity: "<strong>Cooperative Cave Wall Mural (Groups of 4):</strong> On butcher paper, students create handprint outlines and simple animal symbols together.",
+                m4Plenary: "Teams present 1 symbol from their cave painting mural to the class.",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Create a secret symbol drawing at home and let your family guess what story it tells!"
+            },
+            {
+                week: 8,
+                date: "Mar 1 - Mar 5",
+                title: "Unit 1 Review & Celebration (Our World 1 Synthesis)",
+                pages: "Review & Portfolio Synthesis",
+                outcome: "Synthesize Unit 1 topics (Writing tools, Sky phenomena, Family diversity, Cave paintings).",
+                vocab: ["Past", "Now", "Alphabet", "Rainbow", "Family", "Cave", "Synergy", "Leader in Me"],
+                hook: "🏆 <strong>Leader in Me Reading Quiz Show:</strong> Interactive trivia game testing vocabulary and concepts learned across Weeks 1-7!",
+                m2Tasks: [
+                    "Complete Unit 1 Self-Assessment Checklist in workbook.",
+                    "Select favorite drawing/activity from Unit 1 for the Reading Portfolio.",
+                    "Write a 2-sentence summary of favorite reading topic."
+                ],
+                m2Solutions: "Portfolio review and self-assessment verification.",
+                m3Activity: "<strong>Reading Fair Station (Teams):</strong> Teams set up a mini station representing one topic (e.g., Rainbows, Northern Lights, Cave Paintings).",
+                m4Plenary: "Unit 1 Celebration and Leader in Me badge presentation for proactive reading effort!",
+                takehome: "🔍 <strong>Home Inquiry Quest:</strong> Tell your family which NatGeo story was your favorite in Unit 1 and why!"
+            }
+        ];
+
+        let currentWeekIndex = 0;
+
+        // INITIALIZE APP
+        window.onload = function() {
+            renderWeekButtons();
+            loadWeekData(0);
+        };
+
+        // RENDER WEEK BUTTONS
+        function renderWeekButtons() {
+            const container = document.getElementById('week-buttons-container');
+            container.innerHTML = '';
+            weeksData.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = `week-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-gray-300 hover:bg-montanoYellow hover:text-montanoBlue transition ${index === currentWeekIndex ? 'active' : ''}`;
+                btn.id = `week-btn-${index}`;
+                btn.innerHTML = `<i class="fas fa-calendar-day mr-1"></i> Week ${item.week}`;
+                btn.onclick = () => {
+                    document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadWeekData(index);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // LOAD LESSON DATA FOR SELECTED WEEK
+        function loadWeekData(index) {
+            currentWeekIndex = index;
+            const data = weeksData[index];
+
+            document.getElementById('lesson-week-tag').innerText = `Week ${data.week} (${data.date})`;
+            document.getElementById('lesson-title').innerText = data.title;
+            document.getElementById('lesson-pages').innerText = data.pages;
+            document.getElementById('lesson-outcome').innerText = data.outcome;
+
+            // Warm-up content
+            document.getElementById('m1-hook').innerHTML = data.hook;
+            const vocabContainer = document.getElementById('m1-vocab-container');
+            vocabContainer.innerHTML = '';
+            data.vocab.forEach(v => {
+                const badge = document.createElement('span');
+                badge.className = 'bg-white text-montanoBlue font-semibold text-xs px-2.5 py-1 rounded-full border border-montanoLightBlue shadow-sm';
+                badge.innerText = v;
+                vocabContainer.appendChild(badge);
+            });
+
+            // Moment 2
+            const tasksList = document.getElementById('m2-tasks');
+            tasksList.innerHTML = '';
+            data.m2Tasks.forEach(t => {
+                const li = document.createElement('li');
+                li.innerText = t;
+                tasksList.appendChild(li);
+            });
+            document.getElementById('m2-solutions').innerHTML = data.m2Solutions;
+
+            // Moment 3
+            document.getElementById('m3-activity').innerHTML = data.m3Activity;
+
+            // Moment 4
+            document.getElementById('m4-plenary').innerHTML = data.m4Plenary;
+            document.getElementById('m4-takehome').innerHTML = data.takehome;
+
+            // Reset tab view to Moment 1
+            switchTab('moment1');
+            
+            // Close answer key box if open
+            const answerBox = document.getElementById('answer-key-box');
+            if (!answerBox.classList.contains('hidden')) {
+                answerBox.classList.add('hidden');
+            }
+        }
+
+        // SWITCH PEDAGOGICAL TAB
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // TOGGLE SOLUTION ACCORDION
+        function toggleAccordion(elementId) {
+            const el = document.getElementById(elementId);
+            el.classList.toggle('hidden');
+        }
+
+        // CALCULATE RUBRIC SCORE
+        function calcScore() {
+            let total = 0;
+            for (let i = 1; i <= 4; i++) {
+                const radios = document.getElementsByName(`c${i}`);
+                let catScore = 0;
+                for (const r of radios) {
+                    if (r.checked) {
+                        catScore = parseInt(r.value || 3);
+                        break;
+                    }
+                }
+                document.getElementById(`s${i}`).innerText = catScore;
+                total += catScore;
+            }
+            document.getElementById('total-score').innerText = `${total} / 12`;
+        }
+
+        // TOGGLE FULLSCREEN
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
